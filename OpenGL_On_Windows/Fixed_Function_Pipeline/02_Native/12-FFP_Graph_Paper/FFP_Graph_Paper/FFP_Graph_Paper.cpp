@@ -74,7 +74,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hprevInstance, LPSTR lpszCmdLi
 
 	hwnd = CreateWindowEx(WS_EX_APPWINDOW,
 		szAppName,
-		TEXT("FFP_X_Axis_Vertical_Lines !!"),
+		TEXT("FFP_Graph_Paper !!"),
 		WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE,
 		100,
 		100,
@@ -310,40 +310,55 @@ void display(void)
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	// X-Axis
-	glLineWidth(3.0f);
-	glBegin(GL_LINES);
-	glColor3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(-1.0f, 0.0f, 0.0f);
 
-	glColor3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(1.0f, 0.0f, 0.0f);
-
-	glEnd();
-
-	//	Vertical lines----parallel to Y axis
+	float i;
+	
+	// Horizontal lines ---- Parallel to X-Axis
 	glLineWidth(1.0f);
 	glBegin(GL_LINES);
-	float i;
-	for (i = -1.0f; i < 1; i = i + 0.05)
+	for (i = 1.0f; i > -1.0f; i = i - 0.05f)
 	{
 		glColor3f(1.0f, 0.0f, 0.0f);
-		glVertex3f(i, 1.0f, 0.0f);
-
+		glVertex2f(-1.0f, i);
 		glColor3f(1.0f, 0.0f, 0.0f);
-		glVertex3f(i, -1.0f, 0.0f);
+		glVertex2f(1.0f, i);
 	}
+
 	glEnd();
 
-	// Y-Axis
+	// Vertical lines ---- Parallel to Y-Axis
+	glLineWidth(1.0f);
+	glBegin(GL_LINES);
+	for (i = -1.0f; i < 1.0f; i = i + 0.05f)
+	{
+		glColor3f(1.0f, 0.0f, 0.0f);
+		glVertex2f(i, 1.0f);
+		glColor3f(1.0f, 0.0f, 0.0f);
+		glVertex2f(i, -1.0f);
+	}
+
+	glEnd();
+
+	// For X-Axis
 	glLineWidth(3.0f);
 	glBegin(GL_LINES);
-	glColor3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(0.0f, 1.0f, 0.0f);
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glVertex2f(-1.0f, 0.0f);
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glVertex2f(1.0f, 0.0f);
 
-	glColor3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(0.0f, -1.0f, 0.0f);
+	glEnd();
+	
 
+	// For Y-Axis
+	glLineWidth(3.0f);
+	glBegin(GL_LINES);
+	
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glVertex2f(0.0f, 1.0f);
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glVertex2f(0.0f, -1.0f);
+	
 	glEnd();
 
 	SwapBuffers(ghdc);

@@ -23,6 +23,9 @@ HGLRC ghrc = NULL;	// global handle to rendering context
 bool gbActiveWindow = false;
 
 FILE *gpFile = NULL;
+
+int igVar = 0;	// For viewport adjustment on key
+
 // Winmain()
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hprevInstance, LPSTR lpszCmdLine, int iCmdShow)
 {
@@ -74,7 +77,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hprevInstance, LPSTR lpszCmdLi
 
 	hwnd = CreateWindowEx(WS_EX_APPWINDOW,
 		szAppName,
-		TEXT("FFP_X_Axis_Vertical_Lines !!"),
+		TEXT("FFP_Viewport_Control_On_Key !!"),
 		WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE,
 		100,
 		100,
@@ -145,7 +148,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hprevInstance, LPSTR lpszCmdLi
 			// Here call to Display(); though for this application we are calling in WM_PAINT
 		}
 	}
-
 	return (int)msg.wParam;
 }
 
@@ -182,10 +184,46 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		switch (wParam)
 		{
 		case VK_ESCAPE:
-			MessageBox(hwnd, TEXT("Exiting on Escape Key !!"), TEXT("VK_ESCAPE handled"), MB_OK);
+			DestroyWindow(hwnd);
 			break;
 		case 0x46:
 			ToggleFullscreen();
+			break;
+		case 0x31:
+			igVar = 1;
+			resize(WIN_WIDTH, WIN_HEIGHT);
+			break;
+		case 0x32:
+			igVar = 2;
+			resize(WIN_WIDTH, WIN_HEIGHT);
+			break;
+		case 0x33:
+			igVar = 3;
+			resize(WIN_WIDTH, WIN_HEIGHT);
+			break;
+		case 0x34:
+			igVar = 4;
+			resize(WIN_WIDTH, WIN_HEIGHT);
+			break;
+		case 0x35:
+			igVar = 5;
+			resize(WIN_WIDTH, WIN_HEIGHT);
+			break;
+		case 0x36:
+			igVar = 6;
+			resize(WIN_WIDTH, WIN_HEIGHT);
+			break;
+		case 0x37:
+			igVar = 7;
+			resize(WIN_WIDTH, WIN_HEIGHT);
+			break;
+		case 0x38:
+			igVar = 8;
+			resize(WIN_WIDTH, WIN_HEIGHT);
+			break;
+		case 0x39:
+			igVar = 9;
+			resize(WIN_WIDTH, WIN_HEIGHT);
 			break;
 		}
 		break;
@@ -292,15 +330,46 @@ int initialize(void)
 	{
 		return -4;
 	}
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	// warm-up call to resize()
-	//resize(WIN_WIDTH, WIN_HEIGHT);		// for size dependent resources to be adjusted according window
+	resize(WIN_WIDTH, WIN_HEIGHT);		// for size dependent resources to be adjusted according window
 	return 0;
 }
 
 void resize(int width, int height)
 {
-	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+	if (height == 0)
+		height = 1;
+	//glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+	switch (igVar)
+	{
+	case 1:
+		glViewport(0, 0, (GLsizei)width / 2, (GLsizei)height / 2);		// Left Bottom Half
+		break;
+	case 2:
+		glViewport(0, (GLint)height / 2, (GLsizei)width / 2, (GLsizei)height / 2);	//  Left Top Half
+		break;
+	case 3:
+		glViewport((GLint)width / 2, (GLint)height / 2, (GLsizei)width / 2, (GLsizei)height / 2);	// Right Top Half
+		break;
+	case 4:
+		glViewport((GLint)width / 2, 0, (GLsizei)width / 2, (GLsizei)height / 2);		// Right Bottom Half
+		break;
+	case 5:
+		glViewport(0, 0, (GLsizei)width / 2, (GLsizei)height);	//	Left Half
+		break;
+	case 6:
+		glViewport((GLint)width / 2, 0, (GLsizei)width / 2, (GLsizei)height);	//	Right Half
+		break;
+	case 7:
+		glViewport(0, (GLint)height / 2, (GLsizei)width, (GLsizei)height / 2);	//	Top Half
+		break;
+	case 8:
+		glViewport(0, 0, (GLsizei)width, (GLsizei)height / 2);	//	Bottom Half
+		break;
+	default:
+		glViewport(0, 0, (GLsizei)width, (GLsizei)height);	// Full Window
+	}
 }
 
 void display(void)
@@ -310,40 +379,13 @@ void display(void)
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	// X-Axis
-	glLineWidth(3.0f);
-	glBegin(GL_LINES);
+	glBegin(GL_TRIANGLES);
+	glColor3f(1.0f, 0.0f, 0.0f);
+	glVertex2f(0.0f, 1.0f);
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glVertex2f(-1.0f, -1.0f);
 	glColor3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(-1.0f, 0.0f, 0.0f);
-
-	glColor3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(1.0f, 0.0f, 0.0f);
-
-	glEnd();
-
-	//	Vertical lines----parallel to Y axis
-	glLineWidth(1.0f);
-	glBegin(GL_LINES);
-	float i;
-	for (i = -1.0f; i < 1; i = i + 0.05)
-	{
-		glColor3f(1.0f, 0.0f, 0.0f);
-		glVertex3f(i, 1.0f, 0.0f);
-
-		glColor3f(1.0f, 0.0f, 0.0f);
-		glVertex3f(i, -1.0f, 0.0f);
-	}
-	glEnd();
-
-	// Y-Axis
-	glLineWidth(3.0f);
-	glBegin(GL_LINES);
-	glColor3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(0.0f, 1.0f, 0.0f);
-
-	glColor3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(0.0f, -1.0f, 0.0f);
-
+	glVertex2f(1.0f, -1.0f);
 	glEnd();
 
 	SwapBuffers(ghdc);
