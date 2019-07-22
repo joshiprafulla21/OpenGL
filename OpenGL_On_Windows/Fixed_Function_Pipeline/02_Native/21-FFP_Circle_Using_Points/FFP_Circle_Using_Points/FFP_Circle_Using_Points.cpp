@@ -3,10 +3,12 @@
 #include<gl/GL.h>
 #include<stdio.h>		// For file I/O operation, FILE structure is needed
 #include<gl/GLU.h>
+#include<math.h>
 #pragma comment(lib,"opengl32.lib")
 #pragma comment(lib,"glu32.lib")
 #define WIN_WIDTH 800
 #define WIN_HEIGHT 600
+#define PI 3.14
 
 
 // Global function declarations
@@ -76,7 +78,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hprevInstance, LPSTR lpszCmdLi
 
 	hwnd = CreateWindowEx(WS_EX_APPWINDOW,
 		szAppName,
-		TEXT("FFP_Graph_Paper_Triangle!!"),
+		TEXT("FFP_Circle_Using_Points!!"),
 		WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE,
 		100,
 		100,
@@ -314,13 +316,30 @@ void resize(int width, int height)
 void display(void)
 {
 	void DrawGraph(void);
-	void DrawTriangle(void);
+	void DrawCircle(void);
 	glClear(GL_COLOR_BUFFER_BIT);
 	//glFlush();	// Single Buffer
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glTranslatef(0.0f, 0.0f, -1.3f);
+	DrawGraph();
+	
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glTranslatef(0.0f, 0.0f, -5.0f);
+
+	glPointSize(3.0f);
+	glBegin(GL_POINTS);
+	glColor3f(1.0f, 1.0f, 0.0f);
+	DrawCircle();
+	glEnd();
+
+	SwapBuffers(ghdc);
+}
+
+void DrawGraph()
+{
 	float i;
 
 	// Horizontal lines ---- Parallel to X-Axis
@@ -370,35 +389,15 @@ void display(void)
 	glVertex2f(0.0f, -1.0f);
 
 	glEnd();
-
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glTranslatef(0.0f, 0.0f, -5.0f);
-
-	glLineWidth(3.0f);
-	glBegin(GL_LINE_LOOP);
-	DrawTriangle();
-	glEnd();
-
-	SwapBuffers(ghdc);
 }
 
-void DrawGraph(void)
+
+void DrawCircle(void)
 {
-
-}
-
-void DrawTriangle(void)
-{
-	glColor3f(1.0f, 1.0f, 0.0f);
-	glVertex3f(0.0f, 1.0f, 0.0f);
-
-	glColor3f(1.0f, 1.0f, 0.0f);
-	glVertex3f(-1.0f, -1.0f, 0.0f);
-
-	glColor3f(1.0f, 1.0f, 0.0f);
-	glVertex3f(1.0f, -1.0f, 0.0f);
+	for (float angle = 0.0f; angle < 2.0f*PI; angle = angle + 0.001f)
+	{
+		glVertex3f(cos(angle), sin(angle), 0.0f);
+	}
 
 }
 
