@@ -1,0 +1,5 @@
+Log file created successfully
+loadTexture invoked !!
+MakeCheckImage invoked !!
+Initialization successful !!!
+Log file closed successfully !!
